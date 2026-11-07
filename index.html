@@ -3,220 +3,350 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#07131d">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>反射ガイド</title>
+
 <style>
-*{box-sizing:border-box}
+*{
+ box-sizing:border-box;
+}
+
 html,body{
- margin:0;width:100%;height:100%;
- overflow:hidden;background:#07131d;
- color:#eef9ff;font-family:system-ui,-apple-system,sans-serif;
+ margin:0;
+ width:100%;
+ height:100%;
+ overflow:hidden;
+ background:#07131d;
+ color:#eef9ff;
+ font-family:system-ui,-apple-system,sans-serif;
 }
-button,input{font:inherit}
+
+button,input{
+ font:inherit;
+}
+
 button{
- background:#233d51;color:#fff;
+ background:#233d51;
+ color:#fff;
  border:1px solid #49677d;
- border-radius:9px;padding:10px;cursor:pointer;
+ border-radius:9px;
+ padding:10px;
+ cursor:pointer;
 }
-button.on{background:#42d9c7;color:#062b2c}
+
+button.on{
+ background:#42d9c7;
+ color:#062b2c;
+}
+
 #canvas{
- position:fixed;inset:0;width:100%;height:100%;
+ position:fixed;
+ inset:0;
+ width:100%;
+ height:100%;
  touch-action:none;
 }
+
 #top{
- position:fixed;z-index:3;
+ position:fixed;
+ z-index:3;
  top:env(safe-area-inset-top);
- left:0;right:0;
- background:#12283be9;padding:9px;
- display:flex;align-items:center;
- justify-content:flex-end;gap:5px;
+ left:0;
+ right:0;
+ background:#12283be9;
+ padding:9px;
+ display:flex;
+ justify-content:flex-end;
+ align-items:center;
+ gap:5px;
 }
-#top button{font-size:12px;padding:8px;white-space:nowrap}
-#lock.locked{background:#42d9c7;color:#062b2c}
+
+#top button,
+#upload{
+ font-size:12px;
+ padding:8px;
+ white-space:nowrap;
+}
+
+#upload{
+ background:#233d51;
+ color:#fff;
+ border:1px solid #49677d;
+ border-radius:9px;
+ cursor:pointer;
+}
+
+#file{
+ position:absolute;
+ width:1px;
+ height:1px;
+ opacity:0;
+ pointer-events:none;
+}
+
+#lock.locked{
+ background:#42d9c7;
+ color:#062b2c;
+}
+
 #drawer{
- position:fixed;z-index:4;bottom:0;left:0;right:0;
- max-height:84dvh;display:flex;flex-direction:column;
- background:#11283bf7;border-radius:18px 18px 0 0;
+ position:fixed;
+ z-index:4;
+ bottom:0;
+ left:0;
+ right:0;
+ max-height:84dvh;
+ display:flex;
+ flex-direction:column;
+ background:#11283bf7;
+ border-radius:18px 18px 0 0;
  transition:max-height .18s;
 }
+
 #drawer.closed{
  max-height:calc(57px + env(safe-area-inset-bottom));
 }
+
 #toggle{
- flex-shrink:0;background:#1a364b;border:0;
+ flex-shrink:0;
+ background:#1a364b;
+ border:0;
  border-radius:18px 18px 0 0;
- font-weight:700;padding:12px;
+ font-weight:700;
+ padding:12px;
 }
+
 #toggle:before{
- content:"";display:block;width:38px;height:4px;
- border-radius:5px;background:#91acba;
+ content:"";
+ display:block;
+ width:38px;
+ height:4px;
+ border-radius:5px;
+ background:#91acba;
  margin:0 auto 7px;
 }
+
 #settings{
  padding:12px 14px calc(18px + env(safe-area-inset-bottom));
  overflow-y:auto;
 }
+
 .row{
- display:flex;justify-content:space-between;
- align-items:center;gap:8px;margin:12px 0 7px;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:8px;
+ margin:12px 0 7px;
 }
-.row label{font-size:13px}
+
+.row label{
+ font-size:13px;
+}
+
 input[type=number]{
- width:85px;background:#0b1e2d;color:#fff;
- border:1px solid #537388;border-radius:7px;padding:8px;
+ width:85px;
+ background:#0b1e2d;
+ color:#fff;
+ border:1px solid #537388;
+ border-radius:7px;
+ padding:8px;
 }
-input[type=range]{width:100%;accent-color:#42d9c7}
-input[type=color]{
- width:65px;height:34px;background:none;border:0;
+
+input[type=range]{
+ width:100%;
+ accent-color:#42d9c7;
 }
-.buttons{display:flex;gap:6px;margin:12px 0}
+
+.buttons{
+ display:flex;
+ gap:6px;
+ margin:12px 0;
+}
+
 .buttons button{
- flex:1;min-width:0;font-size:12px;padding:10px 3px;
+ flex:1;
+ min-width:0;
+ font-size:12px;
+ padding:10px 3px;
 }
-#status{
- font-size:12px;color:#8ff0dd;
- overflow-wrap:anywhere;line-height:1.6;
-}
-small{
- display:block;color:#afc5d2;
- line-height:1.6;margin-top:12px;
-}
+
 #notice{
- position:fixed;z-index:5;
+ position:fixed;
+ z-index:5;
  top:calc(env(safe-area-inset-top) + 55px);
- left:12px;right:12px;
- padding:9px 12px;border-radius:9px;
- background:#123d40ed;color:#c5fff5;
- font-size:12px;line-height:1.5;
- display:none;pointer-events:none;
+ left:12px;
+ right:12px;
+ padding:9px 12px;
+ border-radius:9px;
+ background:#123d40ed;
+ color:#c5fff5;
+ font-size:12px;
+ line-height:1.5;
+ display:none;
+ pointer-events:none;
 }
-#notice.error{background:#6b2731ed;color:#fff}
+
+#notice.error{
+ background:#6b2731ed;
+ color:#fff;
+}
 </style>
 </head>
+
 <body>
 
 <canvas id="canvas"></canvas>
 
 <header id="top">
- <label for="file" id="upload" style="
-  background:#233d51;color:#fff;
-  border:1px solid #49677d;border-radius:9px;
-  padding:8px;font-size:12px;cursor:pointer;
- ">＋画像</label>
+ <label for="file" id="upload">＋画像</label>
  <button id="lock">発射点固定</button>
- <input id="file" type="file"
+ <input
+  id="file"
+  type="file"
   accept="image/*,.png,.jpg,.jpeg,.webp,.heic,.heif"
-  style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none">
+ >
 </header>
 
 <div id="notice"></div>
 
 <div id="drawer" class="closed">
- <button id="toggle">▲ 設定メニューを開く</button>
+
+ <button id="toggle">
+  ▲ 設定メニューを開く
+ </button>
+
  <div id="settings">
 
   <div class="row">
-   <label>反射回数（0〜10）</label>
-   <input id="bounce" type="number" min="0" max="10" value="3">
+   <label for="bounce">
+    反射回数（0〜20）
+   </label>
+   <input
+    id="bounce"
+    type="number"
+    min="0"
+    max="20"
+    value="3"
+   >
   </div>
-  <input id="bounceRange" type="range" min="0" max="10" value="3">
 
-  <div class="row">
-   <label>射出角度</label>
-   <input id="angle" type="number" step="0.01" value="-45">
-  </div>
+  <input
+   id="bounceRange"
+   type="range"
+   min="0"
+   max="20"
+   value="3"
+  >
+
   <div class="buttons">
-   <button data-delta="-3.52">−3.52°</button>
-   <button data-delta="-0.35">−0.35°</button>
-   <button data-delta="0.35">＋0.35°</button>
-   <button data-delta="3.52">＋3.52°</button>
-  </div>
-
-  <div class="row">
-   <label>キャラ判定直径（画像px）</label>
-   <input id="diam" type="number" min="1" value="76">
-  </div>
-  <div class="row">
-   <label>中心ライン色</label>
-   <input id="lineColor" type="color" value="#ffffff">
-  </div>
-  <div class="row">
-   <label>判定幅の色</label>
-   <input id="bandColor" type="color" value="#42e6d1">
+   <button id="bandBtn" class="on">
+    判定幅 ON
+   </button>
   </div>
 
   <div class="buttons">
-   <button id="bandBtn" class="on">判定幅 ON</button>
-  </div>
-  <div class="buttons">
-   <button id="wallEdit">壁編集</button>
-   <button id="wallReset">壁位置リセット</button>
-  </div>
-  <div class="buttons">
-   <button id="addBlock">＋ブロック</button>
-   <button id="removeBlock">ブロック削除</button>
-  </div>
-  <div class="buttons">
-   <button id="wallVisible" class="on">壁枠 ON</button>
-   <button id="controlVisible" class="on">操作丸 ON</button>
-  </div>
-  <div class="buttons">
-   <button id="save">設定保存</button>
-   <button id="load">設定読込</button>
-   <button id="export">PNG保存</button>
+   <button id="wallEdit">
+    壁編集
+   </button>
+   <button id="wallReset">
+    壁位置リセット
+   </button>
   </div>
 
-  <p id="status">「＋画像」からスクリーンショットを選択してください。</p>
-  <small>
-   発射点または下の操作丸をドラッグすると発射点を移動できます。
-   それ以外の場所を引っ張ると角度を調整できます。
-   壁は「壁編集」ボタンを押したときだけ変更できます。
-   画像読み込み結果は画面上部に表示されます。
-  </small>
+  <div class="buttons">
+   <button id="addBlock">
+    ＋ブロック
+   </button>
+   <button id="removeBlock">
+    ブロック削除
+   </button>
+  </div>
+
  </div>
 </div>
 
 <script>
 'use strict';
 
+// =====================================
+// 基本設定
+// =====================================
+
 const $=id=>document.getElementById(id);
+
 const canvas=$('canvas');
 const ctx=canvas.getContext('2d');
+
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const rad=a=>a*Math.PI/180;
 
+const LINE_COLOR='#ffffff';
+const WALL_COLOR='#42e9d2';
+
+// キャラ判定直径：145px固定
+const CHARACTER_DIAMETER=145;
+
 const DEFAULT_WALL={
- left:3.4,right:96.7,top:18.8,bottom:67.7
+ left:3.4,
+ right:96.7,
+ top:18.8,
+ bottom:67.7
 };
 
 let image=null;
 let imageURL=null;
-let W=1179,H=2556;
-let origin={x:825,y:1534};
+
+let W=1179;
+let H=2556;
+
+let origin={
+ x:825,
+ y:1534
+};
+
 let wall={...DEFAULT_WALL};
-let blocks=[],selected=-1;
-let angle=-45,bounces=3,diameter=76;
-let locked=false,wallEdit=false;
-let wallVisible=true,controlVisible=true,bandOn=true;
-let scale=1,ox=0,oy=0,dpr=1;
-let drag=null,pointerId=null,last=null,pullStart=null;
+
+let blocks=[];
+let selected=-1;
+
+let angle=-45;
+let bounces=3;
+
+let locked=false;
+let wallEdit=false;
+let bandOn=true;
+
+let scale=1;
+let ox=0;
+let oy=0;
+let dpr=1;
+
+let drag=null;
+let pointerId=null;
+let last=null;
+let pullStart=null;
+
 let drawerOpen=false;
 let noticeTimer=null;
 
-function message(s){
- $('status').textContent=s;
-}
+// =====================================
+// 共通処理
+// =====================================
 
 function notify(s,error=false){
  const n=$('notice');
+
  n.textContent=s;
  n.classList.toggle('error',error);
  n.style.display='block';
+
  clearTimeout(noticeTimer);
- noticeTimer=setTimeout(()=>{n.style.display='none'},5000);
- message(s);
+
+ noticeTimer=setTimeout(()=>{
+  n.style.display='none';
+ },4000);
 }
 
 function rect(){
@@ -230,6 +360,7 @@ function rect(){
 
 function point(e){
  const r=canvas.getBoundingClientRect();
+
  return {
   x:(e.clientX-r.left-ox)/scale,
   y:(e.clientY-r.top-oy)/scale
@@ -237,17 +368,23 @@ function point(e){
 }
 
 function hit(p,c,r){
- return Math.hypot(p.x-c.x,p.y-c.y)<=r;
+ return Math.hypot(
+  p.x-c.x,
+  p.y-c.y
+ )<=r;
 }
 
 function setAngle(a){
  if(!Number.isFinite(a))return;
- angle=Math.round(
-  ((((a+180)%360)+360)%360-180)*100
- )/100;
- $('angle').value=angle;
+
+ angle=(((a+180)%360+360)%360)-180;
+
  draw();
 }
+
+// =====================================
+// 発射点の範囲制限
+// =====================================
 
 function visibleBottom(){
  return Math.min(
@@ -258,62 +395,141 @@ function visibleBottom(){
 
 function keepOriginVisible(){
  const r=rect();
- const radius=Math.max(.5,diameter/2);
- let minX=r.x+radius,maxX=r.x+r.w-radius;
- let minY=r.y+radius,maxY=r.y+r.h-radius;
 
- if(maxX<minX)minX=maxX=r.x+r.w/2;
- if(maxY<minY)minY=maxY=r.y+r.h/2;
+ const radius=CHARACTER_DIAMETER/2;
 
- const headerBottom=$('top').getBoundingClientRect().bottom;
+ let minX=r.x+radius;
+ let maxX=r.x+r.w-radius;
+
+ let minY=r.y+radius;
+ let maxY=r.y+r.h-radius;
+
+ if(maxX<minX){
+  minX=maxX=r.x+r.w/2;
+ }
+
+ if(maxY<minY){
+  minY=maxY=r.y+r.h/2;
+ }
+
+ const headerBottom=
+  $('top').getBoundingClientRect().bottom;
+
  const menuTop=visibleBottom();
  const margin=8;
- const screenMinY=(headerBottom+margin-oy)/scale+radius;
- const screenMaxY=(menuTop-margin-oy)/scale-radius;
- const adjustedMinY=Math.max(minY,screenMinY);
- const adjustedMaxY=Math.min(maxY,screenMaxY);
 
- origin.x=clamp(origin.x,minX,maxX);
+ const screenMinY=
+  (headerBottom+margin-oy)/scale+radius;
+
+ const screenMaxY=
+  (menuTop-margin-oy)/scale-radius;
+
+ const adjustedMinY=Math.max(
+  minY,
+  screenMinY
+ );
+
+ const adjustedMaxY=Math.min(
+  maxY,
+  screenMaxY
+ );
+
+ origin.x=clamp(
+  origin.x,
+  minX,
+  maxX
+ );
+
  if(adjustedMaxY>=adjustedMinY){
-  origin.y=clamp(origin.y,adjustedMinY,adjustedMaxY);
+  origin.y=clamp(
+   origin.y,
+   adjustedMinY,
+   adjustedMaxY
+  );
  }else{
-  origin.y=clamp(origin.y,minY,maxY);
+  origin.y=clamp(
+   origin.y,
+   minY,
+   maxY
+  );
  }
 }
 
+// =====================================
+// 画面サイズ
+// =====================================
+
 function resize(){
- const vw=innerWidth,vh=innerHeight;
- dpr=Math.min(devicePixelRatio||1,2);
+ const vw=innerWidth;
+ const vh=innerHeight;
+
+ dpr=Math.min(
+  devicePixelRatio||1,
+  2
+ );
+
  canvas.width=Math.round(vw*dpr);
  canvas.height=Math.round(vh*dpr);
- ctx.setTransform(dpr,0,0,dpr,0,0);
- scale=Math.min(vw/W,vh/H);
+
+ ctx.setTransform(
+  dpr,0,0,dpr,0,0
+ );
+
+ scale=Math.min(
+  vw/W,
+  vh/H
+ );
+
  ox=(vw-W*scale)/2;
  oy=(vh-H*scale)/2;
+
  keepOriginVisible();
  draw();
 }
 
+// =====================================
+// メニュー
+// =====================================
+
 function setDrawer(open){
  drawerOpen=open;
- $('drawer').classList.toggle('closed',!open);
+
+ $('drawer').classList.toggle(
+  'closed',
+  !open
+ );
+
  $('toggle').textContent=open
   ?'▼ 設定メニューを閉じる'
   :'▲ 設定メニューを開く';
- requestAnimationFrame(()=>{keepOriginVisible();draw()});
- setTimeout(()=>{keepOriginVisible();draw()},220);
+
+ requestAnimationFrame(()=>{
+  keepOriginVisible();
+  draw();
+ });
+
+ setTimeout(()=>{
+  keepOriginVisible();
+  draw();
+ },220);
 }
-$('toggle').onclick=()=>setDrawer(!drawerOpen);
+
+$('toggle').onclick=()=>{
+ setDrawer(!drawerOpen);
+};
 
 // =====================================
-// 画像ファイル読み込み
+// 画像読み込み
 // =====================================
 
-$('file').addEventListener('change',async e=>{
- const file=e.target.files&&e.target.files[0];
+$('file').addEventListener('change',e=>{
+ const file=e.target.files?.[0];
+
  if(!file)return;
 
- notify('画像を読み込み中：'+file.name);
+ notify(
+  '画像を読み込み中：'+file.name
+ );
 
  const url=URL.createObjectURL(file);
  const im=new Image();
@@ -321,42 +537,59 @@ $('file').addEventListener('change',async e=>{
  im.onload=()=>{
   if(!im.naturalWidth||!im.naturalHeight){
    URL.revokeObjectURL(url);
-   notify('画像のサイズを取得できませんでした',true);
+
+   notify(
+    '画像サイズを取得できませんでした',
+    true
+   );
+
    return;
   }
 
-  if(imageURL)URL.revokeObjectURL(imageURL);
+  if(imageURL){
+   URL.revokeObjectURL(imageURL);
+  }
 
   imageURL=url;
   image=im;
+
   W=im.naturalWidth;
   H=im.naturalHeight;
+
   wall={...DEFAULT_WALL};
-  origin={x:W*.70,y:H*.60};
-  diameter=W*.065;
+
+  origin={
+   x:W*.70,
+   y:H*.60
+  };
+
   blocks=[];
   selected=-1;
+
   locked=false;
   wallEdit=false;
+
   syncLock();
   syncWallEdit();
-  $('diam').value=diameter.toFixed(1);
+
   resize();
 
   notify(
-   '画像読み込み成功：'+W+'×'+H+' / '+file.name
+   '画像読み込み成功：'+W+'×'+H
   );
  };
 
  im.onerror=()=>{
   URL.revokeObjectURL(url);
+
   notify(
-   '画像を表示できません。PNGまたはJPEGに変換して再度お試しください。',
+   '画像を表示できません。PNGまたはJPEGでお試しください。',
    true
   );
  };
 
  im.src=url;
+
  e.target.value='';
 });
 
@@ -365,14 +598,26 @@ $('file').addEventListener('change',async e=>{
 // =====================================
 
 function syncLock(){
- $('lock').textContent=locked?'固定解除':'発射点固定';
- $('lock').classList.toggle('locked',locked);
+ $('lock').textContent=locked
+  ?'固定解除'
+  :'発射点固定';
+
+ $('lock').classList.toggle(
+  'locked',
+  locked
+ );
 }
+
 $('lock').onclick=()=>{
  locked=!locked;
+
  syncLock();
  draw();
 };
+
+// =====================================
+// 操作丸
+// =====================================
 
 function controlPos(){
  return {
@@ -387,28 +632,66 @@ function controlPos(){
 
 function syncWallEdit(){
  $('wallEdit').textContent=wallEdit
-  ?'壁編集を終了':'壁編集';
- $('wallEdit').classList.toggle('on',wallEdit);
+  ?'壁編集を終了'
+  :'壁編集';
+
+ $('wallEdit').classList.toggle(
+  'on',
+  wallEdit
+ );
 }
 
 function wallHit(p){
- const r=rect(),t=24/scale;
+ const r=rect();
+ const t=24/scale;
+
  const candidates=[
-  {side:'left',distance:Math.abs(p.x-r.x),
-   valid:p.y>=r.y-t&&p.y<=r.y+r.h+t},
-  {side:'right',distance:Math.abs(p.x-r.x-r.w),
-   valid:p.y>=r.y-t&&p.y<=r.y+r.h+t},
-  {side:'top',distance:Math.abs(p.y-r.y),
-   valid:p.x>=r.x-t&&p.x<=r.x+r.w+t},
-  {side:'bottom',distance:Math.abs(p.y-r.y-r.h),
-   valid:p.x>=r.x-t&&p.x<=r.x+r.w+t}
+  {
+   side:'left',
+   distance:Math.abs(p.x-r.x),
+   valid:
+    p.y>=r.y-t&&
+    p.y<=r.y+r.h+t
+  },
+  {
+   side:'right',
+   distance:Math.abs(
+    p.x-r.x-r.w
+   ),
+   valid:
+    p.y>=r.y-t&&
+    p.y<=r.y+r.h+t
+  },
+  {
+   side:'top',
+   distance:Math.abs(p.y-r.y),
+   valid:
+    p.x>=r.x-t&&
+    p.x<=r.x+r.w+t
+  },
+  {
+   side:'bottom',
+   distance:Math.abs(
+    p.y-r.y-r.h
+   ),
+   valid:
+    p.x>=r.x-t&&
+    p.x<=r.x+r.w+t
+  }
  ];
- candidates.sort((a,b)=>a.distance-b.distance);
- return candidates.find(x=>x.valid&&x.distance<=t)?.side||null;
+
+ candidates.sort(
+  (a,b)=>a.distance-b.distance
+ );
+
+ return candidates.find(
+  x=>x.valid&&x.distance<=t
+ )?.side||null;
 }
 
 $('wallEdit').onclick=()=>{
  wallEdit=!wallEdit;
+
  syncWallEdit();
  setDrawer(false);
  draw();
@@ -416,118 +699,257 @@ $('wallEdit').onclick=()=>{
 
 $('wallReset').onclick=()=>{
  wall={...DEFAULT_WALL};
+
  keepOriginVisible();
  draw();
 };
 
 // =====================================
-// ブロック
+// ブロック判定
 // =====================================
 
 function blockHit(p){
  for(let i=blocks.length-1;i>=0;i--){
   const b=blocks[i];
-  if(p.x>=b.x&&p.x<=b.x+b.w&&
-     p.y>=b.y&&p.y<=b.y+b.h)return i;
+
+  if(
+   p.x>=b.x&&
+   p.x<=b.x+b.w&&
+   p.y>=b.y&&
+   p.y<=b.y+b.h
+  ){
+   return i;
+  }
  }
+
  return -1;
 }
 
 function collision(p,d,box){
  let best=null;
+
  const edges=[
-  {axis:'x',value:box.x,nx:-1,ny:0},
-  {axis:'x',value:box.x+box.w,nx:1,ny:0},
-  {axis:'y',value:box.y,nx:0,ny:-1},
-  {axis:'y',value:box.y+box.h,nx:0,ny:1}
+  {
+   axis:'x',
+   value:box.x,
+   nx:-1,
+   ny:0
+  },
+  {
+   axis:'x',
+   value:box.x+box.w,
+   nx:1,
+   ny:0
+  },
+  {
+   axis:'y',
+   value:box.y,
+   nx:0,
+   ny:-1
+  },
+  {
+   axis:'y',
+   value:box.y+box.h,
+   nx:0,
+   ny:1
+  }
  ];
 
  for(const edge of edges){
-  const dv=edge.axis==='x'?d.x:d.y;
+  const dv=edge.axis==='x'
+   ?d.x
+   :d.y;
+
   if(Math.abs(dv)<1e-9)continue;
-  if(d.x*edge.nx+d.y*edge.ny>=0)continue;
-  const cur=edge.axis==='x'?p.x:p.y;
+
+  if(
+   d.x*edge.nx+
+   d.y*edge.ny>=0
+  )continue;
+
+  const cur=edge.axis==='x'
+   ?p.x
+   :p.y;
+
   const t=(edge.value-cur)/dv;
+
   if(t<=.0001)continue;
-  const x=p.x+d.x*t,y=p.y+d.y*t;
-  if(x<box.x-.01||x>box.x+box.w+.01||
-     y<box.y-.01||y>box.y+box.h+.01)continue;
+
+  const x=p.x+d.x*t;
+  const y=p.y+d.y*t;
+
+  if(
+   x<box.x-.01||
+   x>box.x+box.w+.01||
+   y<box.y-.01||
+   y>box.y+box.h+.01
+  )continue;
+
   if(!best||t<best.t){
-   best={t,nx:edge.nx,ny:edge.ny};
+   best={
+    t,
+    nx:edge.nx,
+    ny:edge.ny
+   };
   }
  }
+
  return best;
 }
 
 // =====================================
-// 反射経路
+// 反射経路計算
 // =====================================
 
 function trace(){
- const radius=Math.max(.5,diameter/2);
+ const radius=CHARACTER_DIAMETER/2;
+
  const r=rect();
+
  const inner={
-  x:r.x+radius,y:r.y+radius,
-  w:r.w-radius*2,h:r.h-radius*2
+  x:r.x+radius,
+  y:r.y+radius,
+  w:r.w-radius*2,
+  h:r.h-radius*2
  };
- const path=[{...origin}],hits=[];
- if(inner.w<=0||inner.h<=0)return {path,hits};
+
+ const path=[
+  {...origin}
+ ];
+
+ if(
+  inner.w<=0||
+  inner.h<=0
+ ){
+  return {path};
+ }
 
  let p={...origin};
- let d={x:Math.cos(rad(angle)),y:Math.sin(rad(angle))};
 
+ let d={
+  x:Math.cos(rad(angle)),
+  y:Math.sin(rad(angle))
+ };
+
+ // 最大20回の反射に対応
  for(let i=0;i<=bounces;i++){
   let best=null;
+
   const edges=[
-   {axis:'x',value:inner.x,nx:1,ny:0},
-   {axis:'x',value:inner.x+inner.w,nx:-1,ny:0},
-   {axis:'y',value:inner.y,nx:0,ny:1},
-   {axis:'y',value:inner.y+inner.h,nx:0,ny:-1}
+   {
+    axis:'x',
+    value:inner.x,
+    nx:1,
+    ny:0
+   },
+   {
+    axis:'x',
+    value:inner.x+inner.w,
+    nx:-1,
+    ny:0
+   },
+   {
+    axis:'y',
+    value:inner.y,
+    nx:0,
+    ny:1
+   },
+   {
+    axis:'y',
+    value:inner.y+inner.h,
+    nx:0,
+    ny:-1
+   }
   ];
 
   for(const edge of edges){
-   const dv=edge.axis==='x'?d.x:d.y;
+   const dv=edge.axis==='x'
+    ?d.x
+    :d.y;
+
    if(Math.abs(dv)<1e-9)continue;
-   if(d.x*edge.nx+d.y*edge.ny>=0)continue;
-   const cur=edge.axis==='x'?p.x:p.y;
+
+   if(
+    d.x*edge.nx+
+    d.y*edge.ny>=0
+   )continue;
+
+   const cur=edge.axis==='x'
+    ?p.x
+    :p.y;
+
    const t=(edge.value-cur)/dv;
+
    if(t<=.0001)continue;
-   const x=p.x+d.x*t,y=p.y+d.y*t;
-   if(x<inner.x-.01||x>inner.x+inner.w+.01||
-      y<inner.y-.01||y>inner.y+inner.h+.01)continue;
+
+   const x=p.x+d.x*t;
+   const y=p.y+d.y*t;
+
+   if(
+    x<inner.x-.01||
+    x>inner.x+inner.w+.01||
+    y<inner.y-.01||
+    y>inner.y+inner.h+.01
+   )continue;
+
    if(!best||t<best.t){
-    best={t,nx:edge.nx,ny:edge.ny};
+    best={
+     t,
+     nx:edge.nx,
+     ny:edge.ny
+    };
    }
   }
 
   for(const b of blocks){
    const expanded={
-    x:b.x-radius,y:b.y-radius,
-    w:b.w+radius*2,h:b.h+radius*2
+    x:b.x-radius,
+    y:b.y-radius,
+    w:b.w+radius*2,
+    h:b.h+radius*2
    };
-   const h=collision(p,d,expanded);
-   if(h&&(!best||h.t<best.t))best=h;
+
+   const h=collision(
+    p,
+    d,
+    expanded
+   );
+
+   if(
+    h&&
+    (!best||h.t<best.t)
+   ){
+    best=h;
+   }
   }
 
   if(!best)break;
-  const q={x:p.x+d.x*best.t,y:p.y+d.y*best.t};
+
+  const q={
+   x:p.x+d.x*best.t,
+   y:p.y+d.y*best.t
+  };
+
   path.push(q);
-  hits.push(q);
+
   if(i===bounces)break;
 
-  const dot=d.x*best.nx+d.y*best.ny;
+  const dot=
+   d.x*best.nx+
+   d.y*best.ny;
+
   d={
    x:d.x-2*dot*best.nx,
    y:d.y-2*dot*best.ny
   };
-  p={x:q.x+d.x*.02,y:q.y+d.y*.02};
- }
- return {path,hits};
-}
 
-function rgba(hex,a){
- const n=parseInt(hex.slice(1),16);
- return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`;
+  p={
+   x:q.x+d.x*.02,
+   y:q.y+d.y*.02
+  };
+ }
+
+ return {path};
 }
 
 // =====================================
@@ -535,94 +957,166 @@ function rgba(hex,a){
 // =====================================
 
 function draw(){
- const vw=innerWidth,vh=innerHeight;
+ const vw=innerWidth;
+ const vh=innerHeight;
+
  if(!vw||!vh)return;
 
- ctx.clearRect(0,0,vw,vh);
+ ctx.clearRect(
+  0,0,vw,vh
+ );
+
  ctx.fillStyle='#091622';
- ctx.fillRect(0,0,vw,vh);
+ ctx.fillRect(
+  0,0,vw,vh
+ );
 
  ctx.save();
+
  ctx.translate(ox,oy);
  ctx.scale(scale,scale);
 
+ // 背景画像
  if(image){
   try{
-   ctx.drawImage(image,0,0,W,H);
+   ctx.drawImage(
+    image,
+    0,0,W,H
+   );
   }catch(e){
-   message('画像描画エラー：'+e.message);
+   notify(
+    '画像描画エラー：'+e.message,
+    true
+   );
   }
  }else{
   ctx.fillStyle='#193547';
-  ctx.fillRect(0,0,W,H);
+  ctx.fillRect(
+   0,0,W,H
+  );
  }
 
  const r=rect();
 
- if(wallVisible||wallEdit){
-  ctx.strokeStyle=wallEdit?'#ffe17b':'#42e9d2';
-  ctx.lineWidth=3/scale;
-  ctx.setLineDash([]);
-  ctx.strokeRect(r.x,r.y,r.w,r.h);
- }
+ // 壁枠
+ ctx.strokeStyle=wallEdit
+  ?'#ffe17b'
+  :WALL_COLOR;
 
+ ctx.lineWidth=3/scale;
+ ctx.setLineDash([]);
+
+ ctx.strokeRect(
+  r.x,r.y,r.w,r.h
+ );
+
+ // ブロック
  blocks.forEach((b,i)=>{
   ctx.fillStyle=i===selected
    ?'rgba(255,188,85,.5)'
    :'rgba(255,150,80,.3)';
-  ctx.fillRect(b.x,b.y,b.w,b.h);
+
+  ctx.fillRect(
+   b.x,b.y,b.w,b.h
+  );
+
   ctx.strokeStyle='#ffbc55';
   ctx.lineWidth=3/scale;
-  ctx.strokeRect(b.x,b.y,b.w,b.h);
+
+  ctx.strokeRect(
+   b.x,b.y,b.w,b.h
+  );
  });
 
+ // 反射経路
  const result=trace();
+
  ctx.beginPath();
+
  result.path.forEach((p,i)=>{
-  if(i===0)ctx.moveTo(p.x,p.y);
-  else ctx.lineTo(p.x,p.y);
+  if(i===0){
+   ctx.moveTo(p.x,p.y);
+  }else{
+   ctx.lineTo(p.x,p.y);
+  }
  });
+
  ctx.lineCap='round';
  ctx.lineJoin='round';
 
+ // 半透明の判定幅（145px固定）
  if(bandOn){
-  ctx.strokeStyle=rgba($('bandColor').value,.22);
-  ctx.lineWidth=diameter;
+  ctx.strokeStyle='rgba(66,230,209,.22)';
+  ctx.lineWidth=CHARACTER_DIAMETER;
   ctx.stroke();
  }
 
- ctx.strokeStyle=$('lineColor').value;
+ // 白い中心ライン
+ ctx.strokeStyle=LINE_COLOR;
  ctx.lineWidth=2.5/scale;
  ctx.stroke();
 
- result.hits.forEach((p,i)=>{
-  ctx.fillStyle='#ffe49a';
-  ctx.beginPath();
-  ctx.arc(p.x,p.y,4/scale,0,Math.PI*2);
-  ctx.fill();
-  ctx.font=`${12/scale}px sans-serif`;
-  ctx.fillText(String(i+1),p.x+6/scale,p.y-6/scale);
- });
+ // 反射番号・黄色い丸は表示しない
 
+ // 発射点の判定円
  ctx.beginPath();
- ctx.arc(origin.x,origin.y,diameter/2,0,Math.PI*2);
- ctx.strokeStyle=locked?'#ffd16d':'#4effe6';
+
+ ctx.arc(
+  origin.x,
+  origin.y,
+  CHARACTER_DIAMETER/2,
+  0,
+  Math.PI*2
+ );
+
+ ctx.strokeStyle=locked
+  ?'#ffd16d'
+  :'#4effe6';
+
  ctx.lineWidth=2/scale;
  ctx.stroke();
 
+ // 発射点の中心
  ctx.beginPath();
- ctx.arc(origin.x,origin.y,4/scale,0,Math.PI*2);
+
+ ctx.arc(
+  origin.x,
+  origin.y,
+  4/scale,
+  0,
+  Math.PI*2
+ );
+
  ctx.fillStyle='#ffffff';
  ctx.fill();
 
- if(controlVisible&&!wallEdit){
+ // 下側の操作丸
+ if(!wallEdit){
   const c=controlPos();
-  const rr=Math.max(22/scale,diameter*.27);
+
+  const rr=Math.max(
+   22/scale,
+   CHARACTER_DIAMETER*.27
+  );
+
   ctx.beginPath();
-  ctx.arc(c.x,c.y,rr,0,Math.PI*2);
-  ctx.fillStyle='rgba(63,226,216,.09)';
+
+  ctx.arc(
+   c.x,
+   c.y,
+   rr,
+   0,
+   Math.PI*2
+  );
+
+  ctx.fillStyle=
+   'rgba(63,226,216,.09)';
+
   ctx.fill();
-  ctx.strokeStyle='rgba(90,244,229,.55)';
+
+  ctx.strokeStyle=
+   'rgba(90,244,229,.55)';
+
   ctx.lineWidth=2/scale;
   ctx.stroke();
  }
@@ -631,227 +1125,276 @@ function draw(){
 }
 
 // =====================================
-// タッチ操作
+// タッチ・マウス操作
 // =====================================
 
-canvas.addEventListener('pointerdown',e=>{
- e.preventDefault();
- if(pointerId!==null)return;
- pointerId=e.pointerId;
- canvas.setPointerCapture(e.pointerId);
- const p=point(e);
- last=p;
- pullStart=null;
+canvas.addEventListener(
+ 'pointerdown',
+ e=>{
+  e.preventDefault();
 
- if(wallEdit){
-  drag=wallHit(p);
-  return;
- }
+  if(pointerId!==null)return;
 
- if(!locked&&hit(p,origin,Math.max(diameter/2,24/scale))){
-  drag='origin';
-  return;
- }
+  pointerId=e.pointerId;
 
- if(!locked&&controlVisible&&hit(
-  p,controlPos(),Math.max(diameter*.27,28/scale)
- )){
-  drag='origin';
-  return;
- }
+  canvas.setPointerCapture(
+   e.pointerId
+  );
 
- const b=blockHit(p);
- if(b>=0){
-  selected=b;
-  drag='block';
-  return;
- }
+  const p=point(e);
 
- drag='pull';
- pullStart=p;
-});
+  last=p;
+  pullStart=null;
 
-canvas.addEventListener('pointermove',e=>{
- if(e.pointerId!==pointerId)return;
- e.preventDefault();
- const p=point(e);
- const dx=p.x-last.x,dy=p.y-last.y;
-
- if(wallEdit&&drag){
-  const v=(drag==='left'||drag==='right')
-   ?p.x/W*100:p.y/H*100;
-  if(drag==='left')wall.left=clamp(v,0,wall.right-2);
-  if(drag==='right')wall.right=clamp(v,wall.left+2,100);
-  if(drag==='top')wall.top=clamp(v,0,wall.bottom-2);
-  if(drag==='bottom')wall.bottom=clamp(v,wall.top+2,100);
-  keepOriginVisible();
- }else if(drag==='origin'&&!locked){
-  origin.x+=dx;
-  origin.y+=dy;
-  keepOriginVisible();
- }else if(drag==='block'&&selected>=0){
-  const b=blocks[selected];
-  b.x=clamp(b.x+dx,0,W-b.w);
-  b.y=clamp(b.y+dy,0,H-b.h);
- }else if(drag==='pull'&&pullStart){
-  const x=p.x-pullStart.x;
-  const y=p.y-pullStart.y;
-  if(Math.hypot(x,y)>2){
-   setAngle(Math.atan2(-y,-x)*180/Math.PI);
+  // 壁編集モード
+  if(wallEdit){
+   drag=wallHit(p);
+   return;
   }
+
+  // 発射点
+  if(
+   !locked&&
+   hit(
+    p,
+    origin,
+    Math.max(
+     CHARACTER_DIAMETER/2,
+     24/scale
+    )
+   )
+  ){
+   drag='origin';
+   return;
+  }
+
+  // 下側の操作丸
+  if(
+   !locked&&
+   hit(
+    p,
+    controlPos(),
+    Math.max(
+     CHARACTER_DIAMETER*.27,
+     28/scale
+    )
+   )
+  ){
+   drag='origin';
+   return;
+  }
+
+  // ブロック
+  const b=blockHit(p);
+
+  if(b>=0){
+   selected=b;
+   drag='block';
+   return;
+  }
+
+  // 角度調整
+  drag='pull';
+  pullStart=p;
  }
- last=p;
- draw();
-});
+);
+
+canvas.addEventListener(
+ 'pointermove',
+ e=>{
+  if(e.pointerId!==pointerId)return;
+
+  e.preventDefault();
+
+  const p=point(e);
+
+  const dx=p.x-last.x;
+  const dy=p.y-last.y;
+
+  // 壁編集
+  if(wallEdit&&drag){
+   const v=(
+    drag==='left'||
+    drag==='right'
+   )
+    ?p.x/W*100
+    :p.y/H*100;
+
+   if(drag==='left'){
+    wall.left=clamp(
+     v,0,wall.right-2
+    );
+   }
+
+   if(drag==='right'){
+    wall.right=clamp(
+     v,wall.left+2,100
+    );
+   }
+
+   if(drag==='top'){
+    wall.top=clamp(
+     v,0,wall.bottom-2
+    );
+   }
+
+   if(drag==='bottom'){
+    wall.bottom=clamp(
+     v,wall.top+2,100
+    );
+   }
+
+   keepOriginVisible();
+
+  }else if(
+   drag==='origin'&&
+   !locked
+  ){
+   origin.x+=dx;
+   origin.y+=dy;
+
+   keepOriginVisible();
+
+  }else if(
+   drag==='block'&&
+   selected>=0
+  ){
+   const b=blocks[selected];
+
+   b.x=clamp(
+    b.x+dx,
+    0,
+    W-b.w
+   );
+
+   b.y=clamp(
+    b.y+dy,
+    0,
+    H-b.h
+   );
+
+  }else if(
+   drag==='pull'&&
+   pullStart
+  ){
+   const x=p.x-pullStart.x;
+   const y=p.y-pullStart.y;
+
+   if(Math.hypot(x,y)>2){
+    setAngle(
+     Math.atan2(
+      -y,
+      -x
+     )*180/Math.PI
+    );
+   }
+  }
+
+  last=p;
+  draw();
+ }
+);
 
 function endDrag(e){
  if(e.pointerId!==pointerId)return;
+
  pointerId=null;
  drag=null;
  pullStart=null;
+
  draw();
 }
-canvas.addEventListener('pointerup',endDrag);
-canvas.addEventListener('pointercancel',endDrag);
+
+canvas.addEventListener(
+ 'pointerup',
+ endDrag
+);
+
+canvas.addEventListener(
+ 'pointercancel',
+ endDrag
+);
 
 // =====================================
-// 設定
+// 反射回数（最大20回）
 // =====================================
 
 function setBounces(v){
- bounces=clamp(Math.round(Number(v)||0),0,10);
+ bounces=clamp(
+  Math.round(Number(v)||0),
+  0,20
+ );
+
  $('bounce').value=bounces;
  $('bounceRange').value=bounces;
+
  draw();
 }
-$('bounce').oninput=e=>setBounces(e.target.value);
-$('bounceRange').oninput=e=>setBounces(e.target.value);
-$('angle').oninput=e=>setAngle(Number(e.target.value));
 
-document.querySelectorAll('[data-delta]').forEach(b=>{
- b.onclick=()=>setAngle(angle+Number(b.dataset.delta));
-});
-
-$('diam').oninput=e=>{
- diameter=Math.max(1,Number(e.target.value)||1);
- keepOriginVisible();
- draw();
+$('bounce').oninput=e=>{
+ setBounces(
+  e.target.value
+ );
 };
-$('lineColor').oninput=draw;
-$('bandColor').oninput=draw;
 
-function toggleButton(id,on){
- const btn=$(id);
- btn.classList.toggle('on',on);
- const name=btn.textContent.replace(/\s+(ON|OFF)$/,'');
- btn.textContent=name+(on?' ON':' OFF');
-}
+$('bounceRange').oninput=e=>{
+ setBounces(
+  e.target.value
+ );
+};
 
-$('wallVisible').onclick=()=>{
- wallVisible=!wallVisible;
- toggleButton('wallVisible',wallVisible);
- draw();
-};
-$('controlVisible').onclick=()=>{
- controlVisible=!controlVisible;
- toggleButton('controlVisible',controlVisible);
- draw();
-};
+// =====================================
+// 判定幅の表示
+// =====================================
+
 $('bandBtn').onclick=()=>{
  bandOn=!bandOn;
- toggleButton('bandBtn',bandOn);
+
+ $('bandBtn').classList.toggle(
+  'on',
+  bandOn
+ );
+
+ $('bandBtn').textContent=bandOn
+  ?'判定幅 ON'
+  :'判定幅 OFF';
+
  draw();
 };
+
+// =====================================
+// ブロック追加・削除
+// =====================================
 
 $('addBlock').onclick=()=>{
  const s=W*.09;
+
  blocks.push({
-  x:W/2-s/2,y:H/2-s/2,w:s,h:s
+  x:W/2-s/2,
+  y:H/2-s/2,
+  w:s,
+  h:s
  });
+
  selected=blocks.length-1;
+
  setDrawer(false);
  draw();
 };
 
 $('removeBlock').onclick=()=>{
  if(selected>=0){
-  blocks.splice(selected,1);
+  blocks.splice(
+   selected,
+   1
+  );
+
   selected=-1;
   draw();
- }
-};
-
-// =====================================
-// 保存・読込
-// =====================================
-
-$('save').onclick=()=>{
- try{
-  const data={
-   W,H,origin,locked,angle,bounces,diameter,
-   wall,blocks,wallVisible,controlVisible,bandOn,
-   lineColor:$('lineColor').value,
-   bandColor:$('bandColor').value
-  };
-  localStorage.setItem('monstGuideV16',JSON.stringify(data));
-  notify('設定を保存しました（画像は含みません）');
- }catch(e){
-  notify('保存エラー：'+e.message,true);
- }
-};
-
-$('load').onclick=()=>{
- try{
-  const raw=localStorage.getItem('monstGuideV16');
-  if(!raw){
-   notify('保存済み設定がありません',true);
-   return;
-  }
-  const d=JSON.parse(raw);
-  if((d.W!==W||d.H!==H)&&
-   !confirm('保存時と画像サイズが異なります。読み込みますか？'))return;
-
-  origin=d.origin||origin;
-  locked=!!d.locked;
-  syncLock();
-  setAngle(Number(d.angle)||0);
-  setBounces(d.bounces??3);
-  diameter=d.diameter||diameter;
-  wall=d.wall||{...DEFAULT_WALL};
-  blocks=d.blocks||[];
-  selected=-1;
-  wallVisible=d.wallVisible!==false;
-  controlVisible=d.controlVisible!==false;
-  bandOn=d.bandOn!==false;
-  $('lineColor').value=d.lineColor||'#ffffff';
-  $('bandColor').value=d.bandColor||'#42e6d1';
-  $('diam').value=diameter;
-  toggleButton('wallVisible',wallVisible);
-  toggleButton('controlVisible',controlVisible);
-  toggleButton('bandBtn',bandOn);
-  wallEdit=false;
-  syncWallEdit();
-  keepOriginVisible();
-  draw();
-  notify('設定を読み込みました');
- }catch(e){
-  notify('読込エラー：'+e.message,true);
- }
-};
-
-// =====================================
-// PNG保存
-// =====================================
-
-$('export').onclick=()=>{
- try{
-  const a=document.createElement('a');
-  a.href=canvas.toDataURL('image/png');
-  a.download='reflection-guide.png';
-  a.click();
-  notify('PNGを出力しました');
- }catch(e){
-  notify('PNG保存エラー：'+e.message,true);
+ }else{
+  notify(
+   '削除するブロックを選択してください'
+  );
  }
 };
 
@@ -859,10 +1402,17 @@ $('export').onclick=()=>{
 // 初期化
 // =====================================
 
-window.addEventListener('resize',resize);
+window.addEventListener(
+ 'resize',
+ resize
+);
+
+syncLock();
+syncWallEdit();
 resize();
 setBounces(3);
 draw();
+
 </script>
 </body>
 </html>
