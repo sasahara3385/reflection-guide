@@ -3,10 +3,12 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport"
+ content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#07131d">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>反射ガイド</title>
+
+<title>反射ガイド・テスト版</title>
 
 <style>
 *{
@@ -29,7 +31,7 @@ button,input{
 
 button{
  background:#233d51;
- color:#fff;
+ color:white;
  border:1px solid #49677d;
  border-radius:9px;
  padding:10px;
@@ -72,7 +74,7 @@ button.on{
 
 #upload{
  background:#233d51;
- color:#fff;
+ color:white;
  border:1px solid #49677d;
  border-radius:9px;
  cursor:pointer;
@@ -146,9 +148,9 @@ button.on{
 }
 
 input[type=number]{
- width:85px;
+ width:88px;
  background:#0b1e2d;
- color:#fff;
+ color:white;
  border:1px solid #537388;
  border-radius:7px;
  padding:8px;
@@ -172,6 +174,44 @@ input[type=range]{
  padding:10px 3px;
 }
 
+.section{
+ border-top:1px solid #395268;
+ padding-top:10px;
+ margin-top:14px;
+}
+
+.section-title{
+ font-size:13px;
+ font-weight:700;
+ color:#9cece2;
+ margin:2px 0 10px;
+}
+
+.wall-grid{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:10px;
+}
+
+.wall-field{
+ display:flex;
+ flex-direction:column;
+ gap:5px;
+ font-size:12px;
+ color:#c8e0ec;
+}
+
+.wall-field input{
+ width:100%;
+}
+
+.hint{
+ font-size:11px;
+ color:#a9bfce;
+ line-height:1.6;
+ margin:8px 0;
+}
+
 #notice{
  position:fixed;
  z-index:5;
@@ -190,7 +230,7 @@ input[type=range]{
 
 #notice.error{
  background:#6b2731ed;
- color:#fff;
+ color:white;
 }
 </style>
 </head>
@@ -202,6 +242,7 @@ input[type=range]{
 <header id="top">
  <label for="file" id="upload">＋画像</label>
  <button id="lock">発射点固定</button>
+
  <input
   id="file"
   type="file"
@@ -212,17 +253,12 @@ input[type=range]{
 <div id="notice"></div>
 
 <div id="drawer" class="closed">
-
- <button id="toggle">
-  ▲ 設定メニューを開く
- </button>
+ <button id="toggle">▲ 設定メニューを開く</button>
 
  <div id="settings">
 
   <div class="row">
-   <label for="bounce">
-    反射回数（0〜20）
-   </label>
+   <label for="bounce">反射回数（0〜20）</label>
    <input
     id="bounce"
     type="number"
@@ -240,28 +276,120 @@ input[type=range]{
    value="3"
   >
 
-  <div class="buttons">
-   <button id="bandBtn" class="on">
-    判定幅 ON
-   </button>
+  <div class="section">
+   <div class="section-title">
+    キャラ判定サイズ（テスト用）
+   </div>
+
+   <div class="row">
+    <label for="diameter">
+     キャラ判定直径（画像px）
+    </label>
+
+    <input
+     id="diameter"
+     type="number"
+     min="1"
+     step="1"
+     value="145"
+    >
+   </div>
+
+   <div class="hint">
+    直径を変更すると、判定円・反射位置・判定幅に反映されます。
+   </div>
   </div>
 
-  <div class="buttons">
-   <button id="wallEdit">
-    壁編集
-   </button>
-   <button id="wallReset">
-    壁位置リセット
-   </button>
+  <div class="section">
+   <div class="section-title">
+    壁の位置・サイズ（テスト用）
+   </div>
+
+   <div class="wall-grid">
+
+    <label class="wall-field">
+     左端（%）
+     <input
+      id="wallLeft"
+      type="number"
+      min="0"
+      max="100"
+      step="0.1"
+      value="3.4"
+     >
+    </label>
+
+    <label class="wall-field">
+     右端（%）
+     <input
+      id="wallRight"
+      type="number"
+      min="0"
+      max="100"
+      step="0.1"
+      value="96.7"
+     >
+    </label>
+
+    <label class="wall-field">
+     上端（%）
+     <input
+      id="wallTop"
+      type="number"
+      min="0"
+      max="100"
+      step="0.1"
+      value="18.8"
+     >
+    </label>
+
+    <label class="wall-field">
+     下端（%）
+     <input
+      id="wallBottom"
+      type="number"
+      min="0"
+      max="100"
+      step="0.1"
+      value="67.7"
+     >
+    </label>
+
+   </div>
+
+   <div class="hint">
+    画像全体を100%として指定します。
+    左右・上下の数値差が壁の幅・高さになります。
+   </div>
+
+   <div class="row">
+    <span style="font-size:12px">
+     壁の幅・高さ
+    </span>
+    <span id="wallSize" style="font-size:12px"></span>
+   </div>
+
+   <div class="buttons">
+    <button id="wallEdit">壁編集</button>
+    <button id="wallReset">壁位置リセット</button>
+   </div>
   </div>
 
-  <div class="buttons">
-   <button id="addBlock">
-    ＋ブロック
-   </button>
-   <button id="removeBlock">
-    ブロック削除
-   </button>
+  <div class="section">
+   <div class="section-title">
+    表示・ブロック
+   </div>
+
+   <div class="buttons">
+    <button id="bandBtn" class="on">
+     判定幅 ON
+    </button>
+   </div>
+
+   <div class="buttons">
+    <button id="addBlock">＋ブロック</button>
+    <button id="removeBlock">ブロック削除</button>
+   </div>
   </div>
 
  </div>
@@ -285,8 +413,8 @@ const rad=a=>a*Math.PI/180;
 const LINE_COLOR='#ffffff';
 const WALL_COLOR='#42e9d2';
 
-// キャラ判定直径：145px固定
-const CHARACTER_DIAMETER=145;
+// キャラ判定直径
+const DEFAULT_DIAMETER=145;
 
 const DEFAULT_WALL={
  left:3.4,
@@ -295,17 +423,15 @@ const DEFAULT_WALL={
  bottom:67.7
 };
 
+const EPS=0.01;
+
 let image=null;
 let imageURL=null;
 
 let W=1179;
 let H=2556;
 
-let origin={
- x:825,
- y:1534
-};
-
+let origin={x:825,y:1534};
 let wall={...DEFAULT_WALL};
 
 let blocks=[];
@@ -314,6 +440,9 @@ let selected=-1;
 let angle=-45;
 let bounces=3;
 
+// 編集可能なキャラ判定直径
+let diameter=DEFAULT_DIAMETER;
+
 let locked=false;
 let wallEdit=false;
 let bandOn=true;
@@ -321,7 +450,6 @@ let bandOn=true;
 let scale=1;
 let ox=0;
 let oy=0;
-let dpr=1;
 
 let drag=null;
 let pointerId=null;
@@ -334,6 +462,10 @@ let noticeTimer=null;
 // =====================================
 // 共通処理
 // =====================================
+
+function getRadius(){
+ return diameter/2;
+}
 
 function notify(s,error=false){
  const n=$('notice');
@@ -378,81 +510,56 @@ function setAngle(a){
  if(!Number.isFinite(a))return;
 
  angle=(((a+180)%360+360)%360)-180;
-
  draw();
+}
+
+// =====================================
+// 設定欄の同期
+// =====================================
+
+function syncDiameter(){
+ $('diameter').value=Number(diameter.toFixed(2));
+}
+
+function syncWallInputs(){
+ $('wallLeft').value=Number(wall.left.toFixed(2));
+ $('wallRight').value=Number(wall.right.toFixed(2));
+ $('wallTop').value=Number(wall.top.toFixed(2));
+ $('wallBottom').value=Number(wall.bottom.toFixed(2));
+
+ const r=rect();
+
+ $('wallSize').textContent=
+  Math.round(r.w)+
+  ' × '+
+  Math.round(r.h)+
+  ' px';
 }
 
 // =====================================
 // 発射点の範囲制限
 // =====================================
 
-function visibleBottom(){
- return Math.min(
-  $('drawer').getBoundingClientRect().top,
-  innerHeight
- );
-}
+// メニューやヘッダーによる制限なし。
+// 壁の内側だけに制限する。
 
 function keepOriginVisible(){
  const r=rect();
+ const radius=getRadius();
 
- const radius=CHARACTER_DIAMETER/2;
+ const minX=r.x+radius;
+ const maxX=r.x+r.w-radius;
 
- let minX=r.x+radius;
- let maxX=r.x+r.w-radius;
+ const minY=r.y+radius;
+ const maxY=r.y+r.h-radius;
 
- let minY=r.y+radius;
- let maxY=r.y+r.h-radius;
+ origin.x=maxX>=minX
+  ?clamp(origin.x,minX,maxX)
+  :r.x+r.w/2;
 
- if(maxX<minX){
-  minX=maxX=r.x+r.w/2;
- }
-
- if(maxY<minY){
-  minY=maxY=r.y+r.h/2;
- }
-
- const headerBottom=
-  $('top').getBoundingClientRect().bottom;
-
- const menuTop=visibleBottom();
- const margin=8;
-
- const screenMinY=
-  (headerBottom+margin-oy)/scale+radius;
-
- const screenMaxY=
-  (menuTop-margin-oy)/scale-radius;
-
- const adjustedMinY=Math.max(
-  minY,
-  screenMinY
- );
-
- const adjustedMaxY=Math.min(
-  maxY,
-  screenMaxY
- );
-
- origin.x=clamp(
-  origin.x,
-  minX,
-  maxX
- );
-
- if(adjustedMaxY>=adjustedMinY){
-  origin.y=clamp(
-   origin.y,
-   adjustedMinY,
-   adjustedMaxY
-  );
- }else{
-  origin.y=clamp(
-   origin.y,
-   minY,
-   maxY
-  );
- }
+ origin.y=maxY>=minY
+  ?clamp(origin.y,minY,maxY)
+  :r.y+r.h/2;
 }
 
 // =====================================
@@ -463,23 +570,14 @@ function resize(){
  const vw=innerWidth;
  const vh=innerHeight;
 
- dpr=Math.min(
-  devicePixelRatio||1,
-  2
- );
+ const dpr=Math.min(devicePixelRatio||1,2);
 
  canvas.width=Math.round(vw*dpr);
  canvas.height=Math.round(vh*dpr);
 
- ctx.setTransform(
-  dpr,0,0,dpr,0,0
- );
+ ctx.setTransform(dpr,0,0,dpr,0,0);
 
- scale=Math.min(
-  vw/W,
-  vh/H
- );
-
+ scale=Math.min(vw/W,vh/H);
  ox=(vw-W*scale)/2;
  oy=(vh-H*scale)/2;
 
@@ -494,24 +592,13 @@ function resize(){
 function setDrawer(open){
  drawerOpen=open;
 
- $('drawer').classList.toggle(
-  'closed',
-  !open
- );
+ $('drawer').classList.toggle('closed',!open);
 
  $('toggle').textContent=open
   ?'▼ 設定メニューを閉じる'
   :'▲ 設定メニューを開く';
 
- requestAnimationFrame(()=>{
-  keepOriginVisible();
-  draw();
- });
-
- setTimeout(()=>{
-  keepOriginVisible();
-  draw();
- },220);
+ requestAnimationFrame(draw);
 }
 
 $('toggle').onclick=()=>{
@@ -527,9 +614,7 @@ $('file').addEventListener('change',e=>{
 
  if(!file)return;
 
- notify(
-  '画像を読み込み中：'+file.name
- );
+ notify('画像を読み込み中：'+file.name);
 
  const url=URL.createObjectURL(file);
  const im=new Image();
@@ -537,12 +622,7 @@ $('file').addEventListener('change',e=>{
  im.onload=()=>{
   if(!im.naturalWidth||!im.naturalHeight){
    URL.revokeObjectURL(url);
-
-   notify(
-    '画像サイズを取得できませんでした',
-    true
-   );
-
+   notify('画像サイズを取得できませんでした',true);
    return;
   }
 
@@ -557,11 +637,7 @@ $('file').addEventListener('change',e=>{
   H=im.naturalHeight;
 
   wall={...DEFAULT_WALL};
-
-  origin={
-   x:W*.70,
-   y:H*.60
-  };
+  origin={x:W*.70,y:H*.60};
 
   blocks=[];
   selected=-1;
@@ -571,12 +647,11 @@ $('file').addEventListener('change',e=>{
 
   syncLock();
   syncWallEdit();
+  syncWallInputs();
 
   resize();
 
-  notify(
-   '画像読み込み成功：'+W+'×'+H
-  );
+  notify('画像読み込み成功：'+W+'×'+H);
  };
 
  im.onerror=()=>{
@@ -589,7 +664,6 @@ $('file').addEventListener('change',e=>{
  };
 
  im.src=url;
-
  e.target.value='';
 });
 
@@ -602,21 +676,17 @@ function syncLock(){
   ?'固定解除'
   :'発射点固定';
 
- $('lock').classList.toggle(
-  'locked',
-  locked
- );
+ $('lock').classList.toggle('locked',locked);
 }
 
 $('lock').onclick=()=>{
  locked=!locked;
-
  syncLock();
  draw();
 };
 
 // =====================================
-// 操作丸
+// 下側の操作丸
 // =====================================
 
 function controlPos(){
@@ -635,10 +705,7 @@ function syncWallEdit(){
   ?'壁編集を終了'
   :'壁編集';
 
- $('wallEdit').classList.toggle(
-  'on',
-  wallEdit
- );
+ $('wallEdit').classList.toggle('on',wallEdit);
 }
 
 function wallHit(p){
@@ -649,40 +716,26 @@ function wallHit(p){
   {
    side:'left',
    distance:Math.abs(p.x-r.x),
-   valid:
-    p.y>=r.y-t&&
-    p.y<=r.y+r.h+t
+   valid:p.y>=r.y-t&&p.y<=r.y+r.h+t
   },
   {
    side:'right',
-   distance:Math.abs(
-    p.x-r.x-r.w
-   ),
-   valid:
-    p.y>=r.y-t&&
-    p.y<=r.y+r.h+t
+   distance:Math.abs(p.x-r.x-r.w),
+   valid:p.y>=r.y-t&&p.y<=r.y+r.h+t
   },
   {
    side:'top',
    distance:Math.abs(p.y-r.y),
-   valid:
-    p.x>=r.x-t&&
-    p.x<=r.x+r.w+t
+   valid:p.x>=r.x-t&&p.x<=r.x+r.w+t
   },
   {
    side:'bottom',
-   distance:Math.abs(
-    p.y-r.y-r.h
-   ),
-   valid:
-    p.x>=r.x-t&&
-    p.x<=r.x+r.w+t
+   distance:Math.abs(p.y-r.y-r.h),
+   valid:p.x>=r.x-t&&p.x<=r.x+r.w+t
   }
  ];
 
- candidates.sort(
-  (a,b)=>a.distance-b.distance
- );
+ candidates.sort((a,b)=>a.distance-b.distance);
 
  return candidates.find(
   x=>x.valid&&x.distance<=t
@@ -691,7 +744,6 @@ function wallHit(p){
 
 $('wallEdit').onclick=()=>{
  wallEdit=!wallEdit;
-
  syncWallEdit();
  setDrawer(false);
  draw();
@@ -699,10 +751,76 @@ $('wallEdit').onclick=()=>{
 
 $('wallReset').onclick=()=>{
  wall={...DEFAULT_WALL};
-
+ syncWallInputs();
  keepOriginVisible();
  draw();
 };
+
+function updateWallFromInput(side,value){
+ const v=Number(value);
+
+ if(!Number.isFinite(v))return;
+
+ const minGap=2;
+
+ if(side==='left'){
+  wall.left=clamp(v,0,wall.right-minGap);
+ }
+
+ if(side==='right'){
+  wall.right=clamp(v,wall.left+minGap,100);
+ }
+
+ if(side==='top'){
+  wall.top=clamp(v,0,wall.bottom-minGap);
+ }
+
+ if(side==='bottom'){
+  wall.bottom=clamp(v,wall.top+minGap,100);
+ }
+
+ syncWallInputs();
+ keepOriginVisible();
+ draw();
+}
+
+[
+ ['wallLeft','left'],
+ ['wallRight','right'],
+ ['wallTop','top'],
+ ['wallBottom','bottom']
+].forEach(([id,side])=>{
+ $(id).addEventListener('change',e=>{
+  updateWallFromInput(side,e.target.value);
+ });
+});
+
+// =====================================
+// キャラ判定直径の変更
+// =====================================
+
+function setDiameter(value){
+ const v=Number(value);
+
+ if(!Number.isFinite(v)||v<=0){
+  syncDiameter();
+  return;
+ }
+
+ diameter=clamp(
+  v,
+  1,
+  Math.max(W,H)*2
+ );
+
+ syncDiameter();
+ keepOriginVisible();
+ draw();
+}
+
+$('diameter').addEventListener('change',e=>{
+ setDiameter(e.target.value);
+});
 
 // =====================================
 // ブロック判定
@@ -725,76 +843,46 @@ function blockHit(p){
  return -1;
 }
 
+// =====================================
+// レイと矩形の衝突
+// =====================================
+
 function collision(p,d,box){
- let best=null;
+ const tx1=(box.x-p.x)/d.x;
+ const tx2=(box.x+box.w-p.x)/d.x;
+ const ty1=(box.y-p.y)/d.y;
+ const ty2=(box.y+box.h-p.y)/d.y;
 
- const edges=[
-  {
-   axis:'x',
-   value:box.x,
-   nx:-1,
-   ny:0
-  },
-  {
-   axis:'x',
-   value:box.x+box.w,
-   nx:1,
-   ny:0
-  },
-  {
-   axis:'y',
-   value:box.y,
-   nx:0,
-   ny:-1
-  },
-  {
-   axis:'y',
-   value:box.y+box.h,
-   nx:0,
-   ny:1
-  }
- ];
+ const txMin=Math.min(tx1,tx2);
+ const txMax=Math.max(tx1,tx2);
+ const tyMin=Math.min(ty1,ty2);
+ const tyMax=Math.max(ty1,ty2);
 
- for(const edge of edges){
-  const dv=edge.axis==='x'
-   ?d.x
-   :d.y;
+ const enter=Math.max(txMin,tyMin);
+ const exit=Math.min(txMax,tyMax);
 
-  if(Math.abs(dv)<1e-9)continue;
-
-  if(
-   d.x*edge.nx+
-   d.y*edge.ny>=0
-  )continue;
-
-  const cur=edge.axis==='x'
-   ?p.x
-   :p.y;
-
-  const t=(edge.value-cur)/dv;
-
-  if(t<=.0001)continue;
-
-  const x=p.x+d.x*t;
-  const y=p.y+d.y*t;
-
-  if(
-   x<box.x-.01||
-   x>box.x+box.w+.01||
-   y<box.y-.01||
-   y>box.y+box.h+.01
-  )continue;
-
-  if(!best||t<best.t){
-   best={
-    t,
-    nx:edge.nx,
-    ny:edge.ny
-   };
-  }
+ if(
+  !Number.isFinite(enter)||
+  enter<0||
+  enter>exit
+ ){
+  return null;
  }
 
- return best;
+ let nx=0;
+ let ny=0;
+
+ if(txMin>tyMin){
+  nx=d.x>0?-1:1;
+ }else{
+  ny=d.y>0?-1:1;
+ }
+
+ return {
+  t:enter,
+  nx,
+  ny
+ };
 }
 
 // =====================================
@@ -802,9 +890,8 @@ function collision(p,d,box){
 // =====================================
 
 function trace(){
- const radius=CHARACTER_DIAMETER/2;
-
  const r=rect();
+ const radius=getRadius();
 
  const inner={
   x:r.x+radius,
@@ -813,84 +900,95 @@ function trace(){
   h:r.h-radius*2
  };
 
- const path=[
-  {...origin}
- ];
+ const path=[{...origin}];
 
- if(
-  inner.w<=0||
-  inner.h<=0
- ){
+ if(inner.w<=0||inner.h<=0){
   return {path};
  }
 
- let p={...origin};
+ const left=inner.x;
+ const right=inner.x+inner.w;
+ const top=inner.y;
+ const bottom=inner.y+inner.h;
+
+ let p={
+  x:clamp(origin.x,left,right),
+  y:clamp(origin.y,top,bottom)
+ };
 
  let d={
   x:Math.cos(rad(angle)),
   y:Math.sin(rad(angle))
  };
 
- // 最大20回の反射に対応
- for(let i=0;i<=bounces;i++){
+ let reflectionCount=0;
+
+ // 壁に接した状態から外向きに発射した場合、
+ // その場で1回反射したものとして扱う。
+ const touchX=
+  (p.x<=left+EPS&&d.x<0)||
+  (p.x>=right-EPS&&d.x>0);
+
+ const touchY=
+  (p.y<=top+EPS&&d.y<0)||
+  (p.y>=bottom-EPS&&d.y>0);
+
+ if(touchX||touchY){
+  if(touchX)d.x=-d.x;
+  if(touchY)d.y=-d.y;
+
+  reflectionCount++;
+
+  if(reflectionCount>bounces){
+   return {path};
+  }
+ }
+
+ // 計算上のみ微小移動
+ p={
+  x:clamp(p.x+d.x*EPS,left+EPS,right-EPS),
+  y:clamp(p.y+d.y*EPS,top+EPS,bottom-EPS)
+ };
+
+ let iterations=0;
+
+ while(iterations<100){
+  iterations++;
+
   let best=null;
 
   const edges=[
-   {
-    axis:'x',
-    value:inner.x,
-    nx:1,
-    ny:0
-   },
-   {
-    axis:'x',
-    value:inner.x+inner.w,
-    nx:-1,
-    ny:0
-   },
-   {
-    axis:'y',
-    value:inner.y,
-    nx:0,
-    ny:1
-   },
-   {
-    axis:'y',
-    value:inner.y+inner.h,
-    nx:0,
-    ny:-1
-   }
+   {axis:'x',value:left,nx:1,ny:0},
+   {axis:'x',value:right,nx:-1,ny:0},
+   {axis:'y',value:top,nx:0,ny:1},
+   {axis:'y',value:bottom,nx:0,ny:-1}
   ];
 
   for(const edge of edges){
-   const dv=edge.axis==='x'
-    ?d.x
-    :d.y;
+   const dv=edge.axis==='x'?d.x:d.y;
 
    if(Math.abs(dv)<1e-9)continue;
 
-   if(
-    d.x*edge.nx+
-    d.y*edge.ny>=0
-   )continue;
+   if(d.x*edge.nx+d.y*edge.ny>=0){
+    continue;
+   }
 
-   const cur=edge.axis==='x'
-    ?p.x
-    :p.y;
-
+   const cur=edge.axis==='x'?p.x:p.y;
    const t=(edge.value-cur)/dv;
 
-   if(t<=.0001)continue;
+   if(t<=EPS/10)continue;
 
    const x=p.x+d.x*t;
    const y=p.y+d.y*t;
 
    if(
-    x<inner.x-.01||
-    x>inner.x+inner.w+.01||
-    y<inner.y-.01||
-    y>inner.y+inner.h+.01
-   )continue;
+    x<left-EPS||
+    x>right+EPS||
+    y<top-EPS||
+    y>bottom+EPS
+   ){
+    continue;
+   }
 
    if(!best||t<best.t){
     best={
@@ -901,6 +999,7 @@ function trace(){
    }
   }
 
+  // ブロックとの衝突
   for(const b of blocks){
    const expanded={
     x:b.x-radius,
@@ -909,14 +1008,11 @@ function trace(){
     h:b.h+radius*2
    };
 
-   const h=collision(
-    p,
-    d,
-    expanded
-   );
+   const h=collision(p,d,expanded);
 
    if(
     h&&
+    h.t>EPS/10&&
     (!best||h.t<best.t)
    ){
     best=h;
@@ -932,11 +1028,13 @@ function trace(){
 
   path.push(q);
 
-  if(i===bounces)break;
+  if(reflectionCount>=bounces){
+   break;
+  }
 
-  const dot=
-   d.x*best.nx+
-   d.y*best.ny;
+  reflectionCount++;
+
+  const dot=d.x*best.nx+d.y*best.ny;
 
   d={
    x:d.x-2*dot*best.nx,
@@ -944,8 +1042,8 @@ function trace(){
   };
 
   p={
-   x:q.x+d.x*.02,
-   y:q.y+d.y*.02
+   x:q.x+d.x*EPS,
+   y:q.y+d.y*EPS
   };
  }
 
@@ -962,14 +1060,10 @@ function draw(){
 
  if(!vw||!vh)return;
 
- ctx.clearRect(
-  0,0,vw,vh
- );
+ ctx.clearRect(0,0,vw,vh);
 
  ctx.fillStyle='#091622';
- ctx.fillRect(
-  0,0,vw,vh
- );
+ ctx.fillRect(0,0,vw,vh);
 
  ctx.save();
 
@@ -979,36 +1073,17 @@ function draw(){
  // 背景画像
  if(image){
   try{
-   ctx.drawImage(
-    image,
-    0,0,W,H
-   );
+   ctx.drawImage(image,0,0,W,H);
   }catch(e){
-   notify(
-    '画像描画エラー：'+e.message,
-    true
-   );
+   notify('画像描画エラー：'+e.message,true);
   }
  }else{
   ctx.fillStyle='#193547';
-  ctx.fillRect(
-   0,0,W,H
-  );
+  ctx.fillRect(0,0,W,H);
  }
 
  const r=rect();
-
- // 壁枠
- ctx.strokeStyle=wallEdit
-  ?'#ffe17b'
-  :WALL_COLOR;
-
- ctx.lineWidth=3/scale;
- ctx.setLineDash([]);
-
- ctx.strokeRect(
-  r.x,r.y,r.w,r.h
- );
+ const radius=getRadius();
 
  // ブロック
  blocks.forEach((b,i)=>{
@@ -1016,16 +1091,11 @@ function draw(){
    ?'rgba(255,188,85,.5)'
    :'rgba(255,150,80,.3)';
 
-  ctx.fillRect(
-   b.x,b.y,b.w,b.h
-  );
+  ctx.fillRect(b.x,b.y,b.w,b.h);
 
   ctx.strokeStyle='#ffbc55';
   ctx.lineWidth=3/scale;
-
-  ctx.strokeRect(
-   b.x,b.y,b.w,b.h
-  );
+  ctx.strokeRect(b.x,b.y,b.w,b.h);
  });
 
  // 反射経路
@@ -1044,10 +1114,10 @@ function draw(){
  ctx.lineCap='round';
  ctx.lineJoin='round';
 
- // 半透明の判定幅（145px固定）
+ // 半透明の判定幅
  if(bandOn){
   ctx.strokeStyle='rgba(66,230,209,.22)';
-  ctx.lineWidth=CHARACTER_DIAMETER;
+  ctx.lineWidth=diameter;
   ctx.stroke();
  }
 
@@ -1056,15 +1126,22 @@ function draw(){
  ctx.lineWidth=2.5/scale;
  ctx.stroke();
 
- // 反射番号・黄色い丸は表示しない
+ // 壁枠
+ ctx.strokeStyle=wallEdit
+  ?'#ffe17b'
+  :WALL_COLOR;
+
+ ctx.lineWidth=3/scale;
+ ctx.setLineDash([]);
+
+ ctx.strokeRect(r.x,r.y,r.w,r.h);
 
  // 発射点の判定円
  ctx.beginPath();
-
  ctx.arc(
   origin.x,
   origin.y,
-  CHARACTER_DIAMETER/2,
+  radius,
   0,
   Math.PI*2
  );
@@ -1076,9 +1153,8 @@ function draw(){
  ctx.lineWidth=2/scale;
  ctx.stroke();
 
- // 発射点の中心
+ // 発射点の白い丸（直径8画面px固定）
  ctx.beginPath();
-
  ctx.arc(
   origin.x,
   origin.y,
@@ -1096,27 +1172,16 @@ function draw(){
 
   const rr=Math.max(
    22/scale,
-   CHARACTER_DIAMETER*.27
+   radius*.54
   );
 
   ctx.beginPath();
+  ctx.arc(c.x,c.y,rr,0,Math.PI*2);
 
-  ctx.arc(
-   c.x,
-   c.y,
-   rr,
-   0,
-   Math.PI*2
-  );
-
-  ctx.fillStyle=
-   'rgba(63,226,216,.09)';
-
+  ctx.fillStyle='rgba(63,226,216,.09)';
   ctx.fill();
 
-  ctx.strokeStyle=
-   'rgba(90,244,229,.55)';
-
+  ctx.strokeStyle='rgba(90,244,229,.55)';
   ctx.lineWidth=2/scale;
   ctx.stroke();
  }
@@ -1128,172 +1193,118 @@ function draw(){
 // タッチ・マウス操作
 // =====================================
 
-canvas.addEventListener(
- 'pointerdown',
- e=>{
-  e.preventDefault();
+canvas.addEventListener('pointerdown',e=>{
+ e.preventDefault();
 
-  if(pointerId!==null)return;
+ if(pointerId!==null)return;
 
-  pointerId=e.pointerId;
+ pointerId=e.pointerId;
+ canvas.setPointerCapture(e.pointerId);
 
-  canvas.setPointerCapture(
-   e.pointerId
-  );
+ const p=point(e);
+ last=p;
+ pullStart=null;
 
-  const p=point(e);
-
-  last=p;
-  pullStart=null;
-
-  // 壁編集モード
-  if(wallEdit){
-   drag=wallHit(p);
-   return;
-  }
-
-  // 発射点
-  if(
-   !locked&&
-   hit(
-    p,
-    origin,
-    Math.max(
-     CHARACTER_DIAMETER/2,
-     24/scale
-    )
-   )
-  ){
-   drag='origin';
-   return;
-  }
-
-  // 下側の操作丸
-  if(
-   !locked&&
-   hit(
-    p,
-    controlPos(),
-    Math.max(
-     CHARACTER_DIAMETER*.27,
-     28/scale
-    )
-   )
-  ){
-   drag='origin';
-   return;
-  }
-
-  // ブロック
-  const b=blockHit(p);
-
-  if(b>=0){
-   selected=b;
-   drag='block';
-   return;
-  }
-
-  // 角度調整
-  drag='pull';
-  pullStart=p;
+ if(wallEdit){
+  drag=wallHit(p);
+  return;
  }
-);
 
-canvas.addEventListener(
- 'pointermove',
- e=>{
-  if(e.pointerId!==pointerId)return;
+ if(
+  !locked&&
+  hit(
+   p,
+   origin,
+   Math.max(getRadius(),24/scale)
+  )
+ ){
+  drag='origin';
+  return;
+ }
 
-  e.preventDefault();
+ if(
+  !locked&&
+  hit(
+   p,
+   controlPos(),
+   Math.max(getRadius()*.54,28/scale)
+  )
+ ){
+  drag='origin';
+  return;
+ }
 
-  const p=point(e);
+ const b=blockHit(p);
 
-  const dx=p.x-last.x;
-  const dy=p.y-last.y;
+ if(b>=0){
+  selected=b;
+  drag='block';
+  return;
+ }
 
-  // 壁編集
-  if(wallEdit&&drag){
-   const v=(
-    drag==='left'||
-    drag==='right'
-   )
-    ?p.x/W*100
-    :p.y/H*100;
+ drag='pull';
+ pullStart=p;
+});
 
-   if(drag==='left'){
-    wall.left=clamp(
-     v,0,wall.right-2
-    );
-   }
+canvas.addEventListener('pointermove',e=>{
+ if(e.pointerId!==pointerId)return;
 
-   if(drag==='right'){
-    wall.right=clamp(
-     v,wall.left+2,100
-    );
-   }
+ e.preventDefault();
 
-   if(drag==='top'){
-    wall.top=clamp(
-     v,0,wall.bottom-2
-    );
-   }
+ const p=point(e);
+ const dx=p.x-last.x;
+ const dy=p.y-last.y;
 
-   if(drag==='bottom'){
-    wall.bottom=clamp(
-     v,wall.top+2,100
-    );
-   }
+ if(wallEdit&&drag){
+  const v=(
+   drag==='left'||drag==='right'
+  )?p.x/W*100:p.y/H*100;
 
-   keepOriginVisible();
-
-  }else if(
-   drag==='origin'&&
-   !locked
-  ){
-   origin.x+=dx;
-   origin.y+=dy;
-
-   keepOriginVisible();
-
-  }else if(
-   drag==='block'&&
-   selected>=0
-  ){
-   const b=blocks[selected];
-
-   b.x=clamp(
-    b.x+dx,
-    0,
-    W-b.w
-   );
-
-   b.y=clamp(
-    b.y+dy,
-    0,
-    H-b.h
-   );
-
-  }else if(
-   drag==='pull'&&
-   pullStart
-  ){
-   const x=p.x-pullStart.x;
-   const y=p.y-pullStart.y;
-
-   if(Math.hypot(x,y)>2){
-    setAngle(
-     Math.atan2(
-      -y,
-      -x
-     )*180/Math.PI
-    );
-   }
+  if(drag==='left'){
+   wall.left=clamp(v,0,wall.right-2);
   }
 
-  last=p;
-  draw();
+  if(drag==='right'){
+   wall.right=clamp(v,wall.left+2,100);
+  }
+
+  if(drag==='top'){
+   wall.top=clamp(v,0,wall.bottom-2);
+  }
+
+  if(drag==='bottom'){
+   wall.bottom=clamp(v,wall.top+2,100);
+  }
+
+  syncWallInputs();
+  keepOriginVisible();
+
+ }else if(drag==='origin'&&!locked){
+  origin.x+=dx;
+  origin.y+=dy;
+
+  keepOriginVisible();
+
+ }else if(drag==='block'&&selected>=0){
+  const b=blocks[selected];
+
+  b.x=clamp(b.x+dx,0,W-b.w);
+  b.y=clamp(b.y+dy,0,H-b.h);
+
+ }else if(drag==='pull'&&pullStart){
+  const x=p.x-pullStart.x;
+  const y=p.y-pullStart.y;
+
+  if(Math.hypot(x,y)>2){
+   setAngle(
+    Math.atan2(-y,-x)*180/Math.PI
+   );
+  }
  }
-);
+
+ last=p;
+ draw();
+});
 
 function endDrag(e){
  if(e.pointerId!==pointerId)return;
@@ -1305,15 +1316,8 @@ function endDrag(e){
  draw();
 }
 
-canvas.addEventListener(
- 'pointerup',
- endDrag
-);
-
-canvas.addEventListener(
- 'pointercancel',
- endDrag
-);
+canvas.addEventListener('pointerup',endDrag);
+canvas.addEventListener('pointercancel',endDrag);
 
 // =====================================
 // 反射回数（最大20回）
@@ -1332,15 +1336,11 @@ function setBounces(v){
 }
 
 $('bounce').oninput=e=>{
- setBounces(
-  e.target.value
- );
+ setBounces(e.target.value);
 };
 
 $('bounceRange').oninput=e=>{
- setBounces(
-  e.target.value
- );
+ setBounces(e.target.value);
 };
 
 // =====================================
@@ -1350,10 +1350,7 @@ $('bounceRange').oninput=e=>{
 $('bandBtn').onclick=()=>{
  bandOn=!bandOn;
 
- $('bandBtn').classList.toggle(
-  'on',
-  bandOn
- );
+ $('bandBtn').classList.toggle('on',bandOn);
 
  $('bandBtn').textContent=bandOn
   ?'判定幅 ON'
@@ -1384,17 +1381,11 @@ $('addBlock').onclick=()=>{
 
 $('removeBlock').onclick=()=>{
  if(selected>=0){
-  blocks.splice(
-   selected,
-   1
-  );
-
+  blocks.splice(selected,1);
   selected=-1;
   draw();
  }else{
-  notify(
-   '削除するブロックを選択してください'
-  );
+  notify('削除するブロックを選択してください');
  }
 };
 
@@ -1402,13 +1393,13 @@ $('removeBlock').onclick=()=>{
 // 初期化
 // =====================================
 
-window.addEventListener(
- 'resize',
- resize
-);
+window.addEventListener('resize',resize);
 
 syncLock();
 syncWallEdit();
+syncDiameter();
+syncWallInputs();
+
 resize();
 setBounces(3);
 draw();
