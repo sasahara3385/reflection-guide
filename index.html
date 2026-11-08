@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#07131d">
 <meta name="apple-mobile-web-app-capable" content="yes">
 
-<title>反射ガイド・テスト版</title>
+<title>反射ガイド</title>
 
 <style>
 *{
@@ -278,7 +278,7 @@ input[type=range]{
 
   <div class="section">
    <div class="section-title">
-    キャラ判定サイズ（テスト用）
+    キャラ判定サイズ
    </div>
 
    <div class="row">
@@ -291,18 +291,53 @@ input[type=range]{
      type="number"
      min="1"
      step="1"
-     value="145"
+     value="110"
     >
    </div>
 
    <div class="hint">
-    直径を変更すると、判定円・反射位置・判定幅に反映されます。
+    判定円・反射位置・判定幅に反映されます。
    </div>
   </div>
 
   <div class="section">
    <div class="section-title">
-    壁の位置・サイズ（テスト用）
+    発射点の大きさ
+   </div>
+
+   <div class="row">
+    <label for="originSize">
+     発射点直径（画面px）
+    </label>
+
+    <input
+     id="originSize"
+     type="number"
+     min="2"
+     max="60"
+     step="1"
+     value="8"
+    >
+   </div>
+
+   <input
+    id="originSizeRange"
+    type="range"
+    min="2"
+    max="60"
+    step="1"
+    value="8"
+   >
+
+   <div class="hint">
+    発射点中央の白い丸の大きさを変更します。
+    キャラ判定直径や反射位置には影響しません。
+   </div>
+  </div>
+
+  <div class="section">
+   <div class="section-title">
+    壁の位置・サイズ
    </div>
 
    <div class="wall-grid">
@@ -314,8 +349,8 @@ input[type=range]{
       type="number"
       min="0"
       max="100"
-      step="0.1"
-      value="3.4"
+      step="0.01"
+      value="0"
      >
     </label>
 
@@ -326,8 +361,8 @@ input[type=range]{
       type="number"
       min="0"
       max="100"
-      step="0.1"
-      value="96.7"
+      step="0.01"
+      value="100"
      >
     </label>
 
@@ -338,8 +373,8 @@ input[type=range]{
       type="number"
       min="0"
       max="100"
-      step="0.1"
-      value="18.8"
+      step="0.01"
+      value="17.35"
      >
     </label>
 
@@ -350,8 +385,8 @@ input[type=range]{
       type="number"
       min="0"
       max="100"
-      step="0.1"
-      value="67.7"
+      step="0.01"
+      value="68.93"
      >
     </label>
 
@@ -359,7 +394,7 @@ input[type=range]{
 
    <div class="hint">
     画像全体を100%として指定します。
-    左右・上下の数値差が壁の幅・高さになります。
+    画像を切り替えても設定を引き継ぎます。
    </div>
 
    <div class="row">
@@ -413,15 +448,18 @@ const rad=a=>a*Math.PI/180;
 const LINE_COLOR='#ffffff';
 const WALL_COLOR='#42e9d2';
 
-// キャラ判定直径
-const DEFAULT_DIAMETER=145;
+// 添付画像に合わせた初期設定
+const DEFAULT_DIAMETER=110;
 
 const DEFAULT_WALL={
- left:3.4,
- right:96.7,
- top:18.8,
- bottom:67.7
+ left:0,
+ right:100,
+ top:17.35,
+ bottom:68.93
 };
+
+// 発射点の初期直径（画面px）
+const DEFAULT_ORIGIN_SIZE=8;
 
 const EPS=0.01;
 
@@ -440,8 +478,11 @@ let selected=-1;
 let angle=-45;
 let bounces=3;
 
-// 編集可能なキャラ判定直径
+// キャラ判定直径
 let diameter=DEFAULT_DIAMETER;
+
+// 発射点の表示直径
+let originSize=DEFAULT_ORIGIN_SIZE;
 
 let locked=false;
 let wallEdit=false;
@@ -521,6 +562,11 @@ function syncDiameter(){
  $('diameter').value=Number(diameter.toFixed(2));
 }
 
+function syncOriginSize(){
+ $('originSize').value=originSize;
+ $('originSizeRange').value=originSize;
+}
+
 function syncWallInputs(){
  $('wallLeft').value=Number(wall.left.toFixed(2));
  $('wallRight').value=Number(wall.right.toFixed(2));
@@ -539,9 +585,6 @@ function syncWallInputs(){
 // =====================================
 // 発射点の範囲制限
 // =====================================
-
-// メニューやヘッダーによる制限なし。
-// 壁の内側だけに制限する。
 
 function keepOriginVisible(){
  const r=rect();
@@ -636,9 +679,9 @@ $('file').addEventListener('change',e=>{
   W=im.naturalWidth;
   H=im.naturalHeight;
 
-  // ★ 修正箇所 ★
-  // 画像切り替え時に壁を初期化しない。
-  // 現在の壁設定（%）をそのまま引き継ぐ。
+  // 壁の設定は維持する
+  // キャラ判定直径も維持する
+  // 発射点の大きさも維持する
   origin={x:W*.70,y:H*.60};
 
   blocks=[];
@@ -650,6 +693,8 @@ $('file').addEventListener('change',e=>{
   syncLock();
   syncWallEdit();
   syncWallInputs();
+  syncDiameter();
+  syncOriginSize();
 
   resize();
 
@@ -825,6 +870,42 @@ $('diameter').addEventListener('change',e=>{
 });
 
 // =====================================
+// 発射点の大きさ変更
+// =====================================
+
+function setOriginSize(value){
+ const v=Number(value);
+
+ if(!Number.isFinite(v)){
+  syncOriginSize();
+  return;
+ }
+
+ originSize=clamp(
+  Math.round(v),
+  2,
+  60
+ );
+
+ syncOriginSize();
+ draw();
+}
+
+$('originSize').addEventListener('input',e=>{
+ if(e.target.value!==''){
+  setOriginSize(e.target.value);
+ }
+});
+
+$('originSize').addEventListener('change',e=>{
+ setOriginSize(e.target.value);
+});
+
+$('originSizeRange').addEventListener('input',e=>{
+ setOriginSize(e.target.value);
+});
+
+// =====================================
 // ブロック判定
 // =====================================
 
@@ -925,8 +1006,7 @@ function trace(){
 
  let reflectionCount=0;
 
- // 壁に接した状態から外向きに発射した場合、
- // その場で1回反射したものとして扱う。
+ // 壁に接した状態から外向きに発射した場合
  const touchX=
   (p.x<=left+EPS&&d.x<0)||
   (p.x>=right-EPS&&d.x>0);
@@ -946,7 +1026,6 @@ function trace(){
   }
  }
 
- // 計算上のみ微小移動
  p={
   x:clamp(p.x+d.x*EPS,left+EPS,right-EPS),
   y:clamp(p.y+d.y*EPS,top+EPS,bottom-EPS)
@@ -1001,7 +1080,6 @@ function trace(){
    }
   }
 
-  // ブロックとの衝突
   for(const b of blocks){
    const expanded={
     x:b.x-radius,
@@ -1072,7 +1150,6 @@ function draw(){
  ctx.translate(ox,oy);
  ctx.scale(scale,scale);
 
- // 背景画像
  if(image){
   try{
    ctx.drawImage(image,0,0,W,H);
@@ -1116,29 +1193,26 @@ function draw(){
  ctx.lineCap='round';
  ctx.lineJoin='round';
 
- // 半透明の判定幅
  if(bandOn){
   ctx.strokeStyle='rgba(66,230,209,.22)';
   ctx.lineWidth=diameter;
   ctx.stroke();
  }
 
- // 白い中心ライン
  ctx.strokeStyle=LINE_COLOR;
  ctx.lineWidth=2.5/scale;
  ctx.stroke();
 
- // 壁枠
+ // 壁
  ctx.strokeStyle=wallEdit
   ?'#ffe17b'
   :WALL_COLOR;
 
  ctx.lineWidth=3/scale;
  ctx.setLineDash([]);
-
  ctx.strokeRect(r.x,r.y,r.w,r.h);
 
- // 発射点の判定円
+ // キャラ判定円
  ctx.beginPath();
  ctx.arc(
   origin.x,
@@ -1155,12 +1229,12 @@ function draw(){
  ctx.lineWidth=2/scale;
  ctx.stroke();
 
- // 発射点の白い丸（直径8画面px固定）
+ // 発射点：直径を変更可能
  ctx.beginPath();
  ctx.arc(
   origin.x,
   origin.y,
-  4/scale,
+  originSize/(2*scale),
   0,
   Math.PI*2
  );
@@ -1217,7 +1291,11 @@ canvas.addEventListener('pointerdown',e=>{
   hit(
    p,
    origin,
-   Math.max(getRadius(),24/scale)
+   Math.max(
+    getRadius(),
+    originSize/(2*scale),
+    24/scale
+   )
   )
  ){
   drag='origin';
@@ -1322,7 +1400,7 @@ canvas.addEventListener('pointerup',endDrag);
 canvas.addEventListener('pointercancel',endDrag);
 
 // =====================================
-// 反射回数（最大20回）
+// 反射回数
 // =====================================
 
 function setBounces(v){
@@ -1400,6 +1478,7 @@ window.addEventListener('resize',resize);
 syncLock();
 syncWallEdit();
 syncDiameter();
+syncOriginSize();
 syncWallInputs();
 
 resize();
@@ -1409,3 +1488,4 @@ draw();
 </script>
 </body>
 </html>
+
